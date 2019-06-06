@@ -42,6 +42,10 @@ namespace ProcessManager
             };
             processesListView.CanFocus = true;
             processesWindow.Add(processesListView);
+            processesListView.SelectedChanged += delegate ()
+            {
+
+            };
             var countersWindows = new Window("Counters")
             {
                 X = Pos.Percent(50),
@@ -49,33 +53,11 @@ namespace ProcessManager
                 Width = Dim.Fill(),
                 Height = Dim.Fill() - 1
             };
-            var helpLabel = new View()
-            {
-                X = 0,
-                Y = Pos.AnchorEnd(1),
-                Width = Dim.Fill(),
-                Height = 1,
-                CanFocus = true
-            };
-            top.Add(processesWindow, countersWindows, detailsWindow, helpLabel);
+            top.Add(processesWindow,
+                    countersWindows,
+                    detailsWindow,
+                    StatusBarView.Create());
 
-            //Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(5), (eventLoop) =>
-            //{
-            //    List<string> list = GetProcessList();
-            //    var lv = new ListView(list)
-            //    {
-            //        X = 0,
-            //        Y = 0,
-            //        Width = Dim.Fill(),
-            //        Height = Dim.Fill()
-            //    };
-            //    eventLoop.Invoke(() =>
-            //    {
-            //        processesWindow.RemoveAll();
-            //        processesWindow.Add(lv);
-            //    });
-            //    return true;
-            //});
             return top;
         }
 
