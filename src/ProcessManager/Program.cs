@@ -1,22 +1,21 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Terminal.Gui;
 
 namespace ProcessManager
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            var host = new HostBuilder()
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddHostedService<ProcessManagerService>();
-                })
-                .Build();
-
-            await host.RunAsync();
+            Application.Init();
+            Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e)
+            {
+                e.Cancel = true;
+                Application.RequestStop();
+            };
+            var top = Application.Top;
+            top.Add(WindowHelper.Create());
+            Application.Run();
         }
     }
 }
