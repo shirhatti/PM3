@@ -33,19 +33,29 @@ namespace ProcessManager
                 Width = Dim.Percent(50),
                 Height = Dim.Fill() -1
             };
-            var processesListView = new ListView(new ProcessListDataSource(GetProcessList()))
+            var detailsTextView = new ProcessDetailsTextView()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill(),
+                ReadOnly = true,
+                CanFocus = true
+            };
+            detailsWindow.Add(detailsTextView);
+            var processesListView = new ProcessListView(new ProcessListDataSource(ProcessHelper.GetProcessList()))
             {
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
             };
+            detailsTextView.YieldFocus += delegate ()
+            {
+                top.SetFocus(processesWindow);
+            };
             processesListView.CanFocus = true;
             processesWindow.Add(processesListView);
-            processesListView.SelectedChanged += delegate ()
-            {
-
-            };
             var countersWindows = new Window("Counters")
             {
                 X = Pos.Percent(50),
@@ -53,53 +63,21 @@ namespace ProcessManager
                 Width = Dim.Fill(),
                 Height = Dim.Fill() - 1
             };
+            var countersTextView = CountersTextView.Create();
+            countersWindows.Add(countersTextView);
+            processesListView.Select += delegate (Process process)
+            {
+                detailsTextView.Text = process.FormatDetailsAsString();
+                countersTextView.Start(process);
+                detailsTextView.SetNeedsDisplay();
+                top.SetFocus(detailsTextView);
+            };
             top.Add(processesWindow,
                     countersWindows,
                     detailsWindow,
                     StatusBarView.Create());
 
             return top;
-        }
-
-        private static List<string> GetProcessListAsListOfString()
-        {
-            var processes = GetProcessList();
-            var list = new List<string>();
-            foreach (var process in processes)
-            {
-                try
-                {
-                    list.Add($"{process.Id,10} {process.ProcessName,-10} {process.MainModule.FileName}");
-                }
-                catch (Exception)
-                {
-                    list.Add($"{process.Id,10} {process.ProcessName,-10} [Elevated process - cannot determine path]");
-                }
-            }
-
-            return list;
-        }
-
-        private static IList<Process> GetProcessList()
-        {
-            return EventPipeClient.ListAvailablePorts()
-                .Select(GetProcessById)
-                .Where(process => process != null)
-                .OrderBy(process => process.ProcessName)
-                .ThenBy(process => process.Id)
-                .ToList();
-        }
-
-        private static Process GetProcessById(int processId)
-        {
-            try
-            {
-                return Process.GetProcessById(processId);
-            }
-            catch (ArgumentException)
-            {
-                return null;
-            }
         }
     }
 }

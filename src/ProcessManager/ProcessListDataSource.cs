@@ -11,7 +11,6 @@ namespace ProcessManager
     internal class ProcessListDataSource : IListDataSource
     {
         private IList<Process> _processes;
-        private int _index = 0;
         public ProcessListDataSource(IList<Process> processes)
         {
             _processes = processes;
@@ -34,6 +33,14 @@ namespace ProcessManager
                 output = ($"{process.Id,7} {process.ProcessName,-10} [Elevated process - cannot determine path]");
             }
             RenderUstr(driver, (string)output, col, line, width);
+        }
+
+        public Process this[int index]
+        {
+            get
+            {
+                return _processes[index];
+            } 
         }
 
         void RenderUstr(ConsoleDriver driver, ustring ustr, int col, int line, int width)

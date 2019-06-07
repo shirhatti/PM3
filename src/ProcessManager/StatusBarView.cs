@@ -10,11 +10,6 @@ namespace ProcessManager
         public StatusBarView() : base()
         { }
 
-        public override bool ProcessHotKey(KeyEvent keyEvent)
-        {
-            return base.ProcessHotKey(keyEvent);
-        }
-
         public static StatusBarView Create()
         {
             var statusBar = new StatusBarView()
@@ -25,7 +20,8 @@ namespace ProcessManager
                 Height = 1
             };
             statusBar.Add(
-                new Label("| ^C - Quit | ^R - Refresh process list |")
+                new Label(" ^C - Quit |"),
+                new Label(" ^R - Refresh process list |")
             );
             return statusBar;
         }
