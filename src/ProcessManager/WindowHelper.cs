@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Terminal.Gui;
 
 namespace ProcessManager
@@ -50,10 +51,6 @@ namespace ProcessManager
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
             };
-            detailsTextView.YieldFocus += delegate ()
-            {
-                top.SetFocus(processesWindow);
-            };
             processesListView.CanFocus = true;
             processesWindow.Add(processesListView);
             var countersWindows = new Window("Counters")
@@ -65,12 +62,24 @@ namespace ProcessManager
             };
             var countersTextView = CountersTextView.Create();
             countersWindows.Add(countersTextView);
+            Object timeoutToken = new Object(); 
+            detailsTextView.YieldFocus += delegate ()
+            {
+                countersTextView.Stop();
+                top.SetFocus(processesWindow);
+                Application.MainLoop.RemoveTimeout(timeoutToken);
+            };
             processesListView.Select += delegate (Process process)
             {
                 detailsTextView.Text = process.FormatDetailsAsString();
                 countersTextView.Start(process);
                 detailsTextView.SetNeedsDisplay();
                 top.SetFocus(detailsTextView);
+                timeoutToken = Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), (eventLoop) =>
+                {
+                    countersTextView.Update();
+                    return true;
+                });
             };
             top.Add(processesWindow,
                     countersWindows,
