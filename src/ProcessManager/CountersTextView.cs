@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
@@ -21,6 +22,7 @@ namespace ProcessManager
         private Process _process;
         private ulong _sessionId;
         private Task _task;
+        private Stream _stream;
         private ConcurrentDictionary<string, string> _counters;
 
         public void Start(Process process)
@@ -34,7 +36,7 @@ namespace ProcessManager
                     new Provider(name: "System.Runtime",
                                 keywords: ulong.MaxValue,
                                 eventLevel: EventLevel.Verbose,
-                                filterData: "EventCounterIntervalSec=1")
+                                filterData: "EventCounterIntervalSec=2")
                 };
 
                 var configuration = new SessionConfiguration(
@@ -42,10 +44,15 @@ namespace ProcessManager
                     outputPath: "",
                     providers: providerList);
 
-                var binaryReader = EventPipeClient.CollectTracing(_process.Id, configuration, out _sessionId);
-                var source = new EventPipeEventSource(binaryReader);
+                _stream = EventPipeClient.CollectTracing(_process.Id, configuration, out _sessionId);
+                var source = new EventPipeEventSource(_stream);
                 source.Dynamic.AddCallbackForProviderEvent("System.Runtime", "EventCounters", CounterEvent);
-                source.Process();
+                try
+                {
+                    source.Process();
+                }
+                catch (ObjectDisposedException)
+                { }
             });
 
             _task.Start();
@@ -59,14 +66,15 @@ namespace ProcessManager
                 sb.AppendLine($"{counter.Key} {counter.Value}");
             }
             Text = sb.ToString();
-            SetNeedsDisplay()
+            SetNeedsDisplay();
         }
 
         public void Stop()
         {
             if (_process != null)
             {
-                EventPipeClient.StopTracing(_process.Id, _sessionId);
+                _stream.Dispose();
+                //EventPipeClient.StopTracing(_process.Id, _sessionId);
                 _counters = null;
                 _task = null;
                 _process = null;

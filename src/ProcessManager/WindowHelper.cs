@@ -66,6 +66,7 @@ namespace ProcessManager
             detailsTextView.YieldFocus += delegate ()
             {
                 countersTextView.Stop();
+                countersTextView.Text = "";
                 top.SetFocus(processesWindow);
                 Application.MainLoop.RemoveTimeout(timeoutToken);
             };
@@ -75,7 +76,7 @@ namespace ProcessManager
                 countersTextView.Start(process);
                 detailsTextView.SetNeedsDisplay();
                 top.SetFocus(detailsTextView);
-                timeoutToken = Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), (eventLoop) =>
+                timeoutToken = Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(1), (eventLoop) =>
                 {
                     countersTextView.Update();
                     return true;
