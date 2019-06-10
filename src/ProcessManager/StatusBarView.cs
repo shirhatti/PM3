@@ -20,8 +20,7 @@ namespace ProcessManager
                 Height = 1
             };
             statusBar.Add(
-                new Label(" ^C - Quit |"),
-                new Label(" ^R - Refresh process list |")
+                new Label(" ^C - Quit | ^R - Refresh process list | Enter - Show details | Esc - Return to process list")
             );
             return statusBar;
         }

@@ -63,7 +63,7 @@ namespace ProcessManager
             var sb = new StringBuilder();
             foreach(var counter in _counters)
             {
-                sb.AppendLine($"{counter.Key} {counter.Value}");
+                sb.AppendLine($"{counter.Key, -40} {counter.Value}");
             }
             Text = sb.ToString();
             SetNeedsDisplay();
