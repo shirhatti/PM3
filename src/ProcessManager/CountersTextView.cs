@@ -2,6 +2,7 @@
 using Microsoft.Diagnostics.Tools.RuntimeClient;
 using Microsoft.Diagnostics.Tracing;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,12 +24,12 @@ namespace ProcessManager
         private ulong _sessionId;
         private Task _task;
         private Stream _stream;
-        private ConcurrentDictionary<string, string> _counters;
+        private IDictionary<string, string> _counters;
 
         public void Start(Process process)
         {
             _process = process;
-            _counters = new ConcurrentDictionary<string, string>();
+            _counters = new SortedDictionary<string, string>();
             _task = new Task(() =>
             {
                 var providerList = new List<Provider>()
@@ -73,8 +74,15 @@ namespace ProcessManager
         {
             if (_process != null)
             {
-                _stream.Dispose();
-                //EventPipeClient.StopTracing(_process.Id, _sessionId);
+                if (_process.Id == Process.GetCurrentProcess().Id)
+                {
+                    // Workaround for https://github.com/dotnet/coreclr/issues/25095
+                    _stream.Dispose();
+                }
+                else
+                {
+                    EventPipeClient.StopTracing(_process.Id, _sessionId);
+                }
                 _counters = null;
                 _task = null;
                 _process = null;
