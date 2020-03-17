@@ -1,4 +1,4 @@
-﻿using Microsoft.Diagnostics.Tools.RuntimeClient;
+﻿using Microsoft.Diagnostics.NETCore.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +10,7 @@ namespace ProcessManager
     {
         public static IList<Process> GetProcessList()
         {
-            return EventPipeClient.ListAvailablePorts()
+            return DiagnosticsClient.GetPublishedProcesses()
                 .Select(GetProcessById)
                 .Where(process => process != null)
                 .OrderBy(process => process.ProcessName)

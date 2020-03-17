@@ -1,5 +1,5 @@
-﻿using Microsoft.Diagnostics.Tools.Counters;
-using Microsoft.Diagnostics.Tools.RuntimeClient;
+﻿using Microsoft.Diagnostics.NETCore.Client;
+using Microsoft.Diagnostics.Tools.Counters;
 using Microsoft.Diagnostics.Tracing;
 using System;
 using System.Collections;
@@ -21,9 +21,8 @@ namespace ProcessManager
         public CountersTextView() : base()
         { }
         private Process _process;
-        private ulong _sessionId;
+        private EventPipeSession _session;
         private Task _task;
-        private Stream _stream;
         private IDictionary<string, string> _counters;
 
         public void Start(Process process)
@@ -32,28 +31,23 @@ namespace ProcessManager
             _counters = new SortedDictionary<string, string>();
             _task = new Task(() =>
             {
-                var providerList = new List<Provider>()
+                var diagnosticsClient = new DiagnosticsClient(_process.Id);
+                var providerList = new List<EventPipeProvider>()
                 {
-                    new Provider(name: "System.Runtime",
-                                keywords: ulong.MaxValue,
+                    new EventPipeProvider(name: "System.Runtime",
+                                keywords: long.MaxValue,
                                 eventLevel: EventLevel.Verbose,
-                                filterData: "EventCounterIntervalSec=2")
+                                arguments: new Dictionary<string, string>() { { "EventCounterIntervalSec", "1" } })
                 };
 
-                var configuration = new SessionConfiguration(
-                    circularBufferSizeMB: 100,
-                    outputPath: "",
-                    providers: providerList);
+                _session = diagnosticsClient.StartEventPipeSession(
+                                providers: providerList,
+                                requestRundown: false);
+                
+                var source = new EventPipeEventSource(_session.EventStream);
 
-                _stream = EventPipeClient.CollectTracing(_process.Id, configuration, out _sessionId);
-                var source = new EventPipeEventSource(_stream);
                 source.Dynamic.AddCallbackForProviderEvent("System.Runtime", "EventCounters", CounterEvent);
-                try
-                {
-                    source.Process();
-                }
-                catch (ObjectDisposedException)
-                { }
+                source.Process();
             });
 
             _task.Start();
@@ -74,15 +68,7 @@ namespace ProcessManager
         {
             if (_process != null)
             {
-                if (_process.Id == Process.GetCurrentProcess().Id)
-                {
-                    // Workaround for https://github.com/dotnet/coreclr/issues/25095
-                    _stream.Dispose();
-                }
-                else
-                {
-                    EventPipeClient.StopTracing(_process.Id, _sessionId);
-                }
+                _session.Stop();
                 _counters = null;
                 _task = null;
                 _process = null;

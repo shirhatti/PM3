@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{08C1CCD5-40E6-4FFA-912D-60CF47B2FFBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Diagnostics.Tools.RuntimeClient", "src\Microsoft.Diagnostics.Tools.RuntimeClient\Microsoft.Diagnostics.Tools.RuntimeClient.csproj", "{94215821-B839-455C-8D0C-EDA7516B3FEF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessManager", "src\ProcessManager\ProcessManager.csproj", "{EC67CF0A-C386-4C3F-BB0F-D5534BBCDD03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessManager", "src\ProcessManager\ProcessManager.csproj", "{EC67CF0A-C386-4C3F-BB0F-D5534BBCDD03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,22 +16,7 @@ Global
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Debug|x64.Build.0 = Debug|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Debug|x86.Build.0 = Debug|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Release|x64.ActiveCfg = Release|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Release|x64.Build.0 = Release|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Release|x86.ActiveCfg = Release|Any CPU
-		{94215821-B839-455C-8D0C-EDA7516B3FEF}.Release|x86.Build.0 = Release|Any CPU
 		{EC67CF0A-C386-4C3F-BB0F-D5534BBCDD03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EC67CF0A-C386-4C3F-BB0F-D5534BBCDD03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC67CF0A-C386-4C3F-BB0F-D5534BBCDD03}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -47,8 +30,13 @@ Global
 		{EC67CF0A-C386-4C3F-BB0F-D5534BBCDD03}.Release|x86.ActiveCfg = Release|Any CPU
 		{EC67CF0A-C386-4C3F-BB0F-D5534BBCDD03}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{94215821-B839-455C-8D0C-EDA7516B3FEF} = {08C1CCD5-40E6-4FFA-912D-60CF47B2FFBA}
 		{EC67CF0A-C386-4C3F-BB0F-D5534BBCDD03} = {08C1CCD5-40E6-4FFA-912D-60CF47B2FFBA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4AF4118-D76C-465B-8146-038CF3C4603F}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,3 @@
-using Microsoft.Diagnostics.Tools.RuntimeClient;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
